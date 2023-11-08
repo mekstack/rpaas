@@ -3,11 +3,11 @@ import asyncio
 from configs.app_config import AppConfig
 from configs.logger_config import app_logger
 from grpc_server.server import GrpcServer
-
-from proto.v1.domain.service_pb2_grpc import add_DomainServiceServicer_to_server
-from proto.v1.project.service_pb2_grpc import add_ProjectServiceServicer_to_server
-from proto.v1.subdomain.service_pb2_grpc import add_SubdomainServiceServicer_to_server
-
+from proto.objects_pb2_grpc import (
+    add_DomainServiceServicer_to_server,
+    add_ProjectServiceServicer_to_server,
+    add_SubdomainServiceServicer_to_server
+)
 from services.domain_service import DomainService
 from services.project_service import ProjectService
 from services.subdomain_service import SubdomainService

@@ -3,11 +3,15 @@ from grpc import aio, StatusCode
 from configs.logger_config import app_logger
 from configs.redis_config import RedisConfig
 from controllers.project_controller import ProjectController
-from proto.v1.project.model_pb2 import Project
-from proto.v1.project.service_pb2 import GetProjectInfoRequest, GetProjectInfoResponse, AddProjectInfoRequest, \
-    AddProjectInfoResponse
-from proto.v1.project.service_pb2_grpc import ProjectServiceServicer
-from proto.v1.route.model_pb2 import Route
+from proto.objects_pb2 import (
+    Project,
+    GetProjectInfoRequest,
+    GetProjectInfoResponse,
+    AddProjectInfoRequest,
+    AddProjectInfoResponse,
+    Route
+)
+from proto.objects_pb2_grpc import ProjectServiceServicer
 
 
 class ProjectService(ProjectServiceServicer):

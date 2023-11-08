@@ -13,9 +13,9 @@ class AppConfig:
     ENV = EnvEnum.DEV
     
     # Server
-    SERVER_HOST = os.getenv("SERVER_HOST")
-    SERVER_PORT = int(os.getenv("SERVER_PORT"))
+    SERVER_HOST = os.environ["SERVER_HOST"]
+    SERVER_PORT = int(os.environ["SERVER_PORT"])
     
     # Database
-    REDIS_HOST = os.getenv("REDIS_HOST")
-    REDIS_PORT = int(os.getenv("REDIS_PORT"))
+    REDIS_HOST = os.environ["REDIS_HOST"]
+    REDIS_PORT = int(os.environ["REDIS_PORT"])

@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package subdomain_model;
-
-message Subdomain {
-    string name = 1;
-}

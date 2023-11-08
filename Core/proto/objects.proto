@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package objects;
+
+// Route model
+message Route {
+    string target_ip = 1;
+    repeated Subdomain subdomains = 2;
+}
+
+// Domain model and service
+message Domain {
+    string name = 1;
+}
+message GetDomainsPoolRequest {}
+message GetDomainsPoolResponse {
+    repeated Domain domains = 1;
+}
+service DomainService {
+    rpc GetDomainsPool (GetDomainsPoolRequest) returns (GetDomainsPoolResponse);
+}
+
+// Subdomain model and service
+message Subdomain {
+    string name = 1;
+}
+message GetOccupiedSubdomainsRequest {}
+message GetOccupiedSubdomainsResponse {
+    repeated Subdomain subdomains = 1;
+}
+service SubdomainService {
+    rpc GetOccupiedSubdomains (GetOccupiedSubdomainsRequest) returns (GetOccupiedSubdomainsResponse);
+}
+
+// Project model and service
+message Project {
+    uint32 code = 1;
+    repeated Route routes = 2;
+}
+message GetProjectInfoRequest {
+    uint32 code = 1;
+}
+message GetProjectInfoResponse {
+    Project project = 1;
+}
+message AddProjectInfoRequest {
+    uint32 code = 1;
+    Route route = 2;
+}
+message AddProjectInfoResponse {
+    Project project = 1;
+}
+service ProjectService {
+    rpc GetProjectInfo (GetProjectInfoRequest) returns (GetProjectInfoResponse);
+    rpc AddProjectInfo (AddProjectInfoRequest) returns (AddProjectInfoResponse);
+}

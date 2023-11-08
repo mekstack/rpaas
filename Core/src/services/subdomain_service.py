@@ -2,9 +2,12 @@ import grpc
 
 from configs.redis_config import RedisConfig
 from controllers.subdomain_controller import SubdomainController
-from proto.v1.subdomain.model_pb2 import Subdomain
-from proto.v1.subdomain.service_pb2 import GetOccupiedSubdomainsRequest, GetOccupiedSubdomainsResponse
-from proto.v1.subdomain.service_pb2_grpc import SubdomainServiceServicer
+from proto.objects_pb2 import (
+    Subdomain,
+    GetOccupiedSubdomainsRequest,
+    GetOccupiedSubdomainsResponse
+)
+from proto.objects_pb2_grpc import SubdomainServiceServicer
 
 
 class SubdomainService(SubdomainServiceServicer):

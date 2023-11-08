@@ -2,8 +2,7 @@ import re
 from collections import defaultdict
 from typing import List, Set
 
-from proto.v1.route.model_pb2 import Route
-from proto.v1.subdomain.model_pb2 import Subdomain
+from proto.objects_pb2 import Route, Subdomain
 from repositories.domain_repository import DomainRepository
 from repositories.project_repository import ProjectRepository
 from repositories.subdomain_repository import SubdomainRepository

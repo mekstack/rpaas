@@ -2,9 +2,8 @@ import grpc
 
 from configs.redis_config import RedisConfig
 from controllers.domain_controller import DomainController
-from proto.v1.domain.model_pb2 import Domain
-from proto.v1.domain.service_pb2 import GetDomainsPoolRequest, GetDomainsPoolResponse
-from proto.v1.domain.service_pb2_grpc import DomainServiceServicer
+from proto.objects_pb2 import Domain, GetDomainsPoolRequest, GetDomainsPoolResponse
+from proto.objects_pb2_grpc import DomainServiceServicer
 
 
 class DomainService(DomainServiceServicer):
