@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package project_service;
+
+import "v1/project/model.proto";
+import "v1/route/model.proto";
+
+message GetProjectInfoRequest {
+    uint32 code = 1;
+}
+message GetProjectInfoResponse {
+    project_model.Project project = 1;
+}
+message AddProjectInfoRequest {
+    uint32 code = 1;
+    route_model.Route route = 2;
+}
+message AddProjectInfoResponse {
+    project_model.Project project = 1;
+}
+
+service ProjectService {
+    rpc GetProjectInfo (GetProjectInfoRequest) returns (GetProjectInfoResponse);
+    rpc AddProjectInfo (AddProjectInfoRequest) returns (AddProjectInfoResponse);
+}

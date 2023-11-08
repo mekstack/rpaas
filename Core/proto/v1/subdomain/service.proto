@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package subdomain_service;
+
+import "v1/subdomain/model.proto";
+
+message GetOccupiedSubdomainsRequest {}
+message GetOccupiedSubdomainsResponse {
+    repeated subdomain_model.Subdomain subdomains = 1;
+}
+
+service SubdomainService {
+    rpc GetOccupiedSubdomains (GetOccupiedSubdomainsRequest) returns (GetOccupiedSubdomainsResponse);
+}

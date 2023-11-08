@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package domain;
+
+import "v1/domain/model.proto";
+
+
+message GetDomainsPoolRequest {}
+message GetDomainsPoolResponse {
+    repeated Domain domains = 1;
+}
+
+service DomainService {
+    rpc GetDomainsPool (GetDomainsPoolRequest) returns (GetDomainsPoolResponse);
+}

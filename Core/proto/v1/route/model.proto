@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package route_model;
+
+import "v1/subdomain/model.proto";
+
+message Route {
+    string target_ip = 1;
+    repeated subdomain_model.Subdomain subdomains = 2;
+}

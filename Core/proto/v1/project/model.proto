@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package project_model;
+
+import "v1/route/model.proto";
+
+message Project {
+    uint32 code = 1;
+    repeated route_model.Route routes = 2;
+}
