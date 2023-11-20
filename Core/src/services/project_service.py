@@ -26,7 +26,7 @@ class ProjectService(ProjectServiceServicer):
         
         return GetProjectInfoResponse(
             project=Project(code=project_code, routes=[
-                Route(target_ip=route.target_ip, subdomains=route.subdomains)
+                Route(target_ip=route.target_ip, port=route.port, subdomains=route.subdomains)
                 for route in project_routes
             ])
         )
@@ -49,7 +49,7 @@ class ProjectService(ProjectServiceServicer):
         
         return AddProjectInfoResponse(
             project=Project(code=project_code, routes=[
-                Route(target_ip=route.target_ip, subdomains=route.subdomains)
+                Route(target_ip=route.target_ip, port=route.port, subdomains=route.subdomains)
                 for route in project_routes
             ])
         )

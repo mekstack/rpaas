@@ -36,9 +36,13 @@ class ProjectController:
         )
     
     @staticmethod
-    def parse_route(subdomains: Set[str] | List[str], target_ip: str) -> Set[str] | List[str]:
+    def port_checker(port: int):
+        return 0 <= port <= 65_535
+    
+    @staticmethod
+    def parse_route(subdomains: Set[str] | List[str], target_ip: str, port: int) -> Set[str] | List[str]:
         return [
-            "{}:{}".format(subdomain_name, target_ip)
+            "{}:{}:{}".format(subdomain_name, target_ip, port)
             for subdomain_name in subdomains
         ]
     
@@ -48,17 +52,25 @@ class ProjectController:
         routes = defaultdict(set)
         project_routes = list()
         for route in routes_from_db:
-            subdomain, target_ip = route.split(":")
-            routes[target_ip].add(subdomain)
+            subdomain, target_ip, port = route.split(":")
+            routes["{}:{}".format(target_ip, port)].add(subdomain)
         for key, value in routes.items():
+            t_ip, p = key.split(":")
             project_routes.append(
-                Route(target_ip=key, subdomains=[Subdomain(name=subdomain_name) for subdomain_name in value])
+                Route(
+                    target_ip=t_ip,
+                    port=int(p),
+                    subdomains=[
+                        Subdomain(name=subdomain_name)
+                        for subdomain_name in value
+                    ]
+                )
             )
         
         return project_routes
     
     async def add_routes(self, code: int, route: Route):
-        subdomains, target_ip = route.subdomains, route.target_ip
+        subdomains, target_ip, port = route.subdomains, route.target_ip, route.port
         
         subdomains = [
             subdomain.name
@@ -67,6 +79,9 @@ class ProjectController:
         
         if not self.target_ip_checker(target_ip):
             raise ValueError("Target ip has incorrect format")
+        
+        if not self.port_checker(port):
+            raise ValueError("Port has incorrect format")
         
         legit_domain = await DomainRepository(self.session).get_all()
         for subdomain_name in subdomains:
@@ -90,7 +105,8 @@ class ProjectController:
                 code,
                 self.parse_route(
                     subdomains,
-                    target_ip
+                    target_ip,
+                    port
                 )
             ))
         

@@ -6,12 +6,14 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class Route(_message.Message):
-    __slots__ = ["target_ip", "subdomains"]
+    __slots__ = ["target_ip", "port", "subdomains"]
     TARGET_IP_FIELD_NUMBER: _ClassVar[int]
+    PORT_FIELD_NUMBER: _ClassVar[int]
     SUBDOMAINS_FIELD_NUMBER: _ClassVar[int]
     target_ip: str
+    port: int
     subdomains: _containers.RepeatedCompositeFieldContainer[Subdomain]
-    def __init__(self, target_ip: _Optional[str] = ..., subdomains: _Optional[_Iterable[_Union[Subdomain, _Mapping]]] = ...) -> None: ...
+    def __init__(self, target_ip: _Optional[str] = ..., port: _Optional[int] = ..., subdomains: _Optional[_Iterable[_Union[Subdomain, _Mapping]]] = ...) -> None: ...
 
 class Domain(_message.Message):
     __slots__ = ["name"]

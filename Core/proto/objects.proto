@@ -5,7 +5,8 @@ package objects;
 // Route model
 message Route {
     string target_ip = 1;
-    repeated Subdomain subdomains = 2;
+    uint32 port = 2;
+    repeated Subdomain subdomains = 3;
 }
 
 // Domain model and service
