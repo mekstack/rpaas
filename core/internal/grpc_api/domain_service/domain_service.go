@@ -2,24 +2,28 @@ package domain_service
 
 import (
 	"context"
+	"github.com/mekstack/nataas/core/internal/controller"
 	proto "github.com/mekstack/nataas/core/proto/pb"
 	"google.golang.org/grpc"
 )
 
-type ServiceApi struct {
+type DomainApi struct {
+	cnt *controller.Controller
 	proto.UnimplementedDomainServiceServer
 }
 
-func (s ServiceApi) GetDomainsPool(ctx context.Context, request *proto.GetDomainsPoolRequest) (*proto.GetDomainsPoolResponse, error) {
+func (d *DomainApi) GetDomainsPool(ctx context.Context, request *proto.GetDomainsPoolRequest) (*proto.GetDomainsPoolResponse, error) {
+	availableDomains, err := (*d.cnt).GetDomainsPool(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return &proto.GetDomainsPoolResponse{
-		Domains: []*proto.Domain{
-			&proto.Domain{
-				Name: "mekstack.ru",
-			},
-		},
+		Domains: availableDomains,
 	}, nil
 }
 
-func Register(server *grpc.Server) {
-	proto.RegisterDomainServiceServer(server, ServiceApi{})
+func Register(server *grpc.Server, cnt controller.Controller) {
+	proto.RegisterDomainServiceServer(server, &DomainApi{
+		cnt: &cnt,
+	})
 }

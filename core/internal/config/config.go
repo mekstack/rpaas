@@ -10,12 +10,14 @@ import (
 type Config struct {
 	GrpcServerHost string `yaml:"grpc_server_host"`
 	GrpcServerPort uint   `yaml:"grpc_server_port"`
+	RedisHost      string `yaml:"redis_host"`
+	RedisPort      uint   `yaml:"redis_port"`
 }
 
 func MustRun() *Config {
 	config := new(Config)
 
-	file, err := os.Open("./config/local.yaml")
+	file, err := os.Open(os.Getenv("CONFIG_PATH"))
 	if err != nil {
 		log.Fatalf("%v", err)
 	}

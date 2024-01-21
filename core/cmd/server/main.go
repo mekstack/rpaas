@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/mekstack/nataas/core/internal/config"
+	"github.com/mekstack/nataas/core/internal/controller"
 	"github.com/mekstack/nataas/core/internal/grpc_api/domain_service"
+	"github.com/mekstack/nataas/core/internal/storage"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -21,9 +23,13 @@ func main() {
 		log.Fatal("Something went wrong", err.Error())
 	}
 
+	store := storage.New(appConfig.RedisHost, appConfig.RedisPort)
+
+	cnt := controller.New(store)
+
 	grpcServer := grpc.NewServer()
 
-	domain_service.Register(grpcServer)
+	domain_service.Register(grpcServer, cnt)
 
 	if err := grpcServer.Serve(listener); err != nil {
 		return
