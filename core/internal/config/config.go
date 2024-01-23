@@ -7,14 +7,24 @@ import (
 	"os"
 )
 
-type Config struct {
-	GrpcServerHost string `yaml:"grpc_server_host"`
-	GrpcServerPort uint   `yaml:"grpc_server_port"`
-	RedisHost      string `yaml:"redis_host"`
-	RedisPort      uint   `yaml:"redis_port"`
+type GrpcServer struct {
+	Host string `yaml:"host"`
+	Port uint   `yaml:"port"`
 }
 
-func MustRun() *Config {
+type Redis struct {
+	UserName string `yaml:"username"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     uint   `yaml:"port"`
+}
+
+type Config struct {
+	GrpcServer GrpcServer `yaml:"grpc_server"`
+	Redis      Redis      `yaml:"redis"`
+}
+
+func MustConfig() *Config {
 	config := new(Config)
 
 	file, err := os.Open(os.Getenv("CONFIG_PATH"))

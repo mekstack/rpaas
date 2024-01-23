@@ -5,6 +5,8 @@ import (
 	"github.com/mekstack/nataas/core/internal/config"
 	"github.com/mekstack/nataas/core/internal/controller"
 	"github.com/mekstack/nataas/core/internal/grpc_api/domain_service"
+	"github.com/mekstack/nataas/core/internal/grpc_api/project_service"
+	"github.com/mekstack/nataas/core/internal/grpc_api/subdomain_service"
 	"github.com/mekstack/nataas/core/internal/storage"
 	"google.golang.org/grpc"
 	"log"
@@ -12,24 +14,31 @@ import (
 )
 
 func main() {
-	appConfig := config.MustRun()
+	appConfig := config.MustConfig()
+
+	store := storage.MustConnect(
+		appConfig.Redis.Host,
+		appConfig.Redis.Port,
+		appConfig.Redis.UserName,
+		appConfig.Redis.Password,
+	)
+
+	cnt := controller.New(store)
 
 	listener, err := net.Listen(
 		"tcp",
-		fmt.Sprintf("%s:%d", appConfig.GrpcServerHost, appConfig.GrpcServerPort),
+		fmt.Sprintf("%s:%d", appConfig.GrpcServer.Host, appConfig.GrpcServer.Port),
 	)
 
 	if err != nil {
-		log.Fatal("Something went wrong", err.Error())
+		log.Fatal(err.Error())
 	}
-
-	store := storage.New(appConfig.RedisHost, appConfig.RedisPort)
-
-	cnt := controller.New(store)
 
 	grpcServer := grpc.NewServer()
 
 	domain_service.Register(grpcServer, cnt)
+	subdomain_service.Register(grpcServer, cnt)
+	project_service.Register(grpcServer, cnt)
 
 	if err := grpcServer.Serve(listener); err != nil {
 		return

@@ -14,16 +14,18 @@ type DomainApi struct {
 
 func (d *DomainApi) GetDomainsPool(ctx context.Context, request *proto.GetDomainsPoolRequest) (*proto.GetDomainsPoolResponse, error) {
 	availableDomains, err := (*d.cnt).GetDomainsPool(ctx)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return &proto.GetDomainsPoolResponse{
 		Domains: availableDomains,
 	}, nil
 }
 
-func Register(server *grpc.Server, cnt controller.Controller) {
+func Register(server *grpc.Server, controller controller.Controller) {
 	proto.RegisterDomainServiceServer(server, &DomainApi{
-		cnt: &cnt,
+		cnt: &controller,
 	})
 }
