@@ -8,9 +8,10 @@ import (
 )
 
 type Storage interface {
-	GetDomainsPool(ctx context.Context) ([]string, error)
-	GetOccupiedSubdomains(ctx context.Context) ([]string, error)
-	GetProjectInfo(context.Context, uint32) ([]string, error)
+	GetDomainsPool(context.Context) ([]string, error)
+	GetOccupiedSubdomains(context.Context) ([]string, error)
+	GetProjectRoutes(context.Context, uint32) ([]string, error)
+	AddRouteToProject(context.Context, uint32, string, uint32, []string) error
 }
 
 type storage struct {
@@ -34,7 +35,7 @@ func (s *storage) GetDomainsPool(ctx context.Context) ([]string, error) {
 }
 
 func (s *storage) GetOccupiedSubdomains(ctx context.Context) ([]string, error) {
-	tableKey := "domains"
+	tableKey := "subdomains"
 	occupiedSubdomains := make([]string, 0)
 
 	request := s.db.SMembers(ctx, tableKey)
@@ -49,20 +50,38 @@ func (s *storage) GetOccupiedSubdomains(ctx context.Context) ([]string, error) {
 	return occupiedSubdomains, nil
 }
 
-func (s *storage) GetProjectInfo(ctx context.Context, projectNumber uint32) ([]string, error) {
+func (s *storage) GetProjectRoutes(ctx context.Context, projectCode uint32) ([]string, error) {
 	tableKey := "project"
-	projectRoutes := make([]string, 0)
 
-	request := s.db.SMembers(ctx, fmt.Sprintf("%s:%d", tableKey, projectNumber))
+	request := s.db.SMembers(ctx, fmt.Sprintf("%s:%d", tableKey, projectCode))
 	if err := request.Err(); err != nil {
 		return nil, err
 	}
 
-	for _, subDomainName := range request.Val() {
-		projectRoutes = append(projectRoutes, subDomainName)
+	projectRoutes := make([]string, 0)
+	for _, subdomainName := range request.Val() {
+		projectRoutes = append(projectRoutes, subdomainName)
 	}
 
 	return projectRoutes, nil
+}
+
+func (s *storage) AddRouteToProject(
+	ctx context.Context,
+	projectCode uint32,
+	targetIp string,
+	port uint32,
+	subdomains []string,
+) error {
+	tableKey := "project"
+	projectRoutes := make([]string, 0)
+
+	for _, subdomain := range subdomains {
+		projectRoutes = append(projectRoutes, fmt.Sprintf("%s:%s:%d", subdomain, targetIp, port))
+	}
+
+	request := s.db.SAdd(ctx, fmt.Sprintf("%s:%d", tableKey, projectCode), projectRoutes)
+	return request.Err()
 }
 
 func MustConnect(host string, port uint, userName, password string) *storage {

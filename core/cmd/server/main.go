@@ -41,7 +41,7 @@ func main() {
 	project_service.Register(grpcServer, cnt)
 
 	if err := grpcServer.Serve(listener); err != nil {
-		return
+		log.Fatal(err.Error())
 	}
 
 }

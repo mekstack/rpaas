@@ -20,8 +20,11 @@ func (p *ProjectApi) GetProjectInfo(ctx context.Context, request *proto.GetProje
 	return &proto.GetProjectInfoResponse{Project: response}, nil
 }
 func (p *ProjectApi) AddProjectInfo(ctx context.Context, request *proto.AddProjectInfoRequest) (*proto.AddProjectInfoResponse, error) {
-	// TODO: Realize this method in all layers
-	return nil, nil
+	response, err := (*p.controller).AddProjectInfo(ctx, request.Code, request.Route)
+	if err != nil {
+		return nil, err
+	}
+	return &proto.AddProjectInfoResponse{Project: response}, nil
 }
 
 func Register(server *grpc.Server, controller controller.Controller) {
