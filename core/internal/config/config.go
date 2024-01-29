@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/go-yaml/yaml"
 	"io"
 	"log"
 	"os"
+
+	"github.com/go-yaml/yaml"
 )
 
 type GrpcServer struct {

@@ -1,0 +1,29 @@
+version: "1.0"
+services:
+  core:
+    build: 
+      context: ../.
+      dockerfile: ./build/Dockerfile
+    container_name: mekstack_nattas_core
+    restart: unless-stopped
+    depends_on:
+      - redis
+    ports:
+      - 8080:8080
+    networks:
+      - mekstack_network
+  
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+      - 8001:8001
+    networks:
+      - mekstack_network
+
+networks:
+  mekstack_network:
+    driver: bridge
+    name: mekstack_network

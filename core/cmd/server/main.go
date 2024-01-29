@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/mekstack/nataas/core/internal/config"
 	"github.com/mekstack/nataas/core/internal/controller"
 	"github.com/mekstack/nataas/core/internal/grpc_api/domain_service"
@@ -9,8 +12,6 @@ import (
 	"github.com/mekstack/nataas/core/internal/grpc_api/subdomain_service"
 	"github.com/mekstack/nataas/core/internal/storage"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 func main() {
@@ -22,6 +23,7 @@ func main() {
 		appConfig.Redis.UserName,
 		appConfig.Redis.Password,
 	)
+	log.Println("Core sucsesfully connect to storage")
 
 	cnt := controller.New(store)
 
@@ -40,6 +42,7 @@ func main() {
 	subdomain_service.Register(grpcServer, cnt)
 	project_service.Register(grpcServer, cnt)
 
+	log.Println("Core start to listen")
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatal(err.Error())
 	}
