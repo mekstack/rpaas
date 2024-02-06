@@ -10,6 +10,7 @@ import (
 
 type SubdomainProvider interface {
 	GetOccupiedSubdomains(context.Context) ([]string, error)
+	AddToOccupiedSubdomains(context.Context, string) error
 }
 
 type controller struct {

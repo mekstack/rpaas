@@ -1,8 +1,12 @@
 package config
 
 import (
+	"fmt"
 	"os"
+	"strings"
 )
+
+var validEnvironments = []string{"Development", "Production"}
 
 const (
 	Development uint = iota
@@ -32,7 +36,7 @@ func mustReadEnvironment() uint {
 	case "Production":
 		envCode = Production
 	default:
-		panic("Env NATAAS_ENVIRONMENT is not valid")
+		panic(fmt.Errorf("Value %s is not valid for NATAAS_ENVIRONMENT, valid vales: "+strings.Join(validEnvironments, " "), value))
 	}
 
 	return envCode

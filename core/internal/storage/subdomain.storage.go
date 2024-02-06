@@ -21,7 +21,7 @@ func (s *storage) GetOccupiedSubdomains(ctx context.Context) ([]string, error) {
 	return occupiedSubdomains, nil
 }
 
-func (s *storage) AddSubdomain(ctx context.Context, subdomain string) error {
+func (s *storage) AddToOccupiedSubdomains(ctx context.Context, subdomain string) error {
 	request := s.db.SAdd(ctx, subdomainTableKey, subdomain)
 	return request.Err()
 }

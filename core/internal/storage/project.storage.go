@@ -28,8 +28,5 @@ func (s *storage) AddRouteToProject(
 	endpoint, subdomainName string,
 ) error {
 	request := s.db.SAdd(ctx, fmt.Sprintf("%s:%d", projectTableKey, projectCode), fmt.Sprintf("%s:%s", endpoint, subdomainName))
-	if request.Err() != nil {
-		return request.Err()
-	}
-	return s.AddSubdomain(ctx, subdomainName)
+	return request.Err()
 }
