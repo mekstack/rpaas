@@ -15,7 +15,7 @@ services:
     environment:
       - NATAAS_REDIS_ADDR=redis:6379
       - NATAAS_GRPC_ADDR=0.0.0.0:8080
-      - NATAAS_ENVIRONMENT=asd
+      - NATAAS_ENVIRONMENT=Development
 
   redis:
     image: redis/redis-stack:latest
