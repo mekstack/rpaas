@@ -1,0 +1,5 @@
+./build
+./deploy
+./README.md
+.gitignore
+.dockerignore
