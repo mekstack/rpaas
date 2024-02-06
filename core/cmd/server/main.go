@@ -2,49 +2,61 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
 
 	"github.com/mekstack/nataas/core/internal/config"
-	"github.com/mekstack/nataas/core/internal/controller"
-	"github.com/mekstack/nataas/core/internal/grpc_api/domain_service"
-	"github.com/mekstack/nataas/core/internal/grpc_api/project_service"
-	"github.com/mekstack/nataas/core/internal/grpc_api/subdomain_service"
+	domain_controller "github.com/mekstack/nataas/core/internal/controller/domain"
+	project_controller "github.com/mekstack/nataas/core/internal/controller/project"
+	subdomain_controller "github.com/mekstack/nataas/core/internal/controller/subdomain"
+	"github.com/mekstack/nataas/core/internal/grpc/domain_service"
+	"github.com/mekstack/nataas/core/internal/grpc/project_service"
+	"github.com/mekstack/nataas/core/internal/grpc/subdomain_service"
 	"github.com/mekstack/nataas/core/internal/storage"
+
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	appConfig := config.MustConfig()
+	conf := config.MustConfig()
 
-	store := storage.MustConnect(
-		appConfig.Redis.Host,
-		appConfig.Redis.Port,
-		appConfig.Redis.UserName,
-		appConfig.Redis.Password,
-	)
-	log.Println("Core sucsesfully connect to storage")
+	log := mustSetUpLogger(conf)
+	defer log.Sync()
 
-	cnt := controller.New(store)
+	log.Info("Config and logger was set up", zap.Any("Config", conf))
 
-	listener, err := net.Listen(
-		"tcp",
-		fmt.Sprintf("%s:%d", appConfig.GrpcServer.Host, appConfig.GrpcServer.Port),
-	)
+	store := storage.MustConnect(conf.Redis.Addr, log)
 
+	lis, err := net.Listen("tcp", conf.GrpcServer.Addr)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Sugar().Fatalln("Creation listener error:", err)
+	}
+	log.Info("Core start to listen:", zap.String("Addr", conf.GrpcServer.Addr))
+
+	srv := grpc.NewServer()
+	domain_service.Register(srv, domain_controller.New(store, log))
+	subdomain_service.Register(srv, subdomain_controller.New(store, log))
+	project_service.Register(srv, project_controller.New(store, log))
+
+	if err := srv.Serve(lis); err != nil {
+		log.Sugar().Fatalln("Serve error:", err)
 	}
 
-	grpcServer := grpc.NewServer()
+}
 
-	domain_service.Register(grpcServer, cnt)
-	subdomain_service.Register(grpcServer, cnt)
-	project_service.Register(grpcServer, cnt)
-
-	log.Println("Core start to listen")
-	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatal(err.Error())
+func mustSetUpLogger(conf *config.Config) *zap.Logger {
+	var logger *zap.Logger
+	var err error
+	switch conf.Environment {
+	case config.Development:
+		logger, err = zap.NewDevelopment()
+	case config.Production:
+		logger, err = zap.NewProduction()
+	default:
+		panic("There is not valid Environment")
 	}
-
+	if err != nil {
+		panic(fmt.Errorf("Logger not set: %s", err))
+	}
+	return logger
 }

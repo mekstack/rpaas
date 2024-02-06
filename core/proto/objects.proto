@@ -7,9 +7,8 @@ package objects;
 
 // Route model
 message Route {
-  string target_ip = 1;
-  uint32 port = 2;
-  repeated Subdomain subdomains = 3;
+  string endpoint = 1;
+  Subdomain subdomain = 2;
 }
 
 // Domain model and service
@@ -41,20 +40,20 @@ message Project {
   uint32 code = 1;
   repeated Route routes = 2;
 }
-message GetProjectInfoRequest {
+message GetProjectRequest {
   uint32 code = 1;
 }
-message GetProjectInfoResponse {
+message GetProjectResponse {
   Project project = 1;
 }
-message AddProjectInfoRequest {
+message AddRouteToProjectRequest {
   uint32 code = 1;
   Route route = 2;
 }
-message AddProjectInfoResponse {
+message AddRouteToProjectResponse {
   Project project = 1;
 }
 service ProjectService {
-  rpc GetProjectInfo (GetProjectInfoRequest) returns (GetProjectInfoResponse);
-  rpc AddProjectInfo (AddProjectInfoRequest) returns (AddProjectInfoResponse);
+  rpc GetProject (GetProjectRequest) returns (GetProjectResponse);
+  rpc AddRouteToProject (AddRouteToProjectRequest) returns (AddRouteToProjectResponse);
 }

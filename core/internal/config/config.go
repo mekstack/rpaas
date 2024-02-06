@@ -1,46 +1,60 @@
 package config
 
 import (
-	"io"
-	"log"
 	"os"
+)
 
-	"github.com/go-yaml/yaml"
+const (
+	Development uint = iota
+	Production
 )
 
 type GrpcServer struct {
-	Host string `yaml:"host"`
-	Port uint   `yaml:"port"`
+	Addr string
 }
 
 type Redis struct {
-	UserName string `yaml:"username"`
-	Password string `yaml:"password"`
-	Host     string `yaml:"host"`
-	Port     uint   `yaml:"port"`
+	Addr string
 }
 
 type Config struct {
-	GrpcServer GrpcServer `yaml:"grpc_server"`
-	Redis      Redis      `yaml:"redis"`
+	GrpcServer  *GrpcServer
+	Redis       *Redis
+	Environment uint
+}
+
+func mustReadEnvironment() uint {
+	value := readEnvOrSetDefault("NATAAS_ENVIRONMENT", "Development")
+	envCode := Development
+	switch value {
+	case "Development":
+		envCode = Development
+	case "Production":
+		envCode = Production
+	default:
+		panic("Env NATAAS_ENVIRONMENT is not valid")
+	}
+
+	return envCode
+}
+
+func readEnvOrSetDefault(key string, def string) string {
+	value, ok := os.LookupEnv(key)
+	if !ok {
+		os.Setenv(key, def)
+		value = def
+	}
+	return value
 }
 
 func MustConfig() *Config {
-	config := new(Config)
-
-	file, err := os.Open(os.Getenv("CONFIG_PATH"))
-	if err != nil {
-		log.Fatalf("%v", err)
+	return &Config{
+		Redis: &Redis{
+			Addr: readEnvOrSetDefault("NATAAS_REDIS_ADDR", "127.0.0.1:6379"),
+		},
+		GrpcServer: &GrpcServer{
+			Addr: readEnvOrSetDefault("NATAAS_GRPC_ADDR", "127.0.0.1:8080"),
+		},
+		Environment: mustReadEnvironment(),
 	}
-
-	data, err := io.ReadAll(file)
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
-
-	if err := yaml.Unmarshal(data, config); err != nil {
-		log.Fatalf("%v", err)
-	}
-
-	return config
 }

@@ -1,17 +1,14 @@
-FROM ubuntu:latest
+FROM golang:bookworm
 LABEL autor=mmmmaxonchik
-# Setup ubuntu
-RUN apt-get update
-RUN apt-get -y install curl
-# Setup go
-RUN curl -OL https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
-RUN rm -rf /usr/local/go 
-RUN tar -C /usr/local -xvf go1.21.6.linux-amd64.tar.gz
-ENV PATH="/usr/local/go/bin:${PATH}"
 # Setup repository
-RUN mkdir -p /home/core
-COPY . /home/core
-RUN cd /home/core
-RUN cd /home/core && go build /home/core/cmd/server/main.go 
-ENV CONFIG_PATH="/home/core/config/local.yaml"
-ENTRYPOINT [ "/home/core/main" ]
+RUN mkdir /project
+COPY . /project
+RUN ls /project
+RUN cd /project 
+RUN cd /project && go build ./cmd/server/main.go 
+# Setup core
+ENV NATAAS_REDIS_ADDR="redis:6379"
+ENV NATAAS_GRPC_ADDR="127.0.0.1:8080"
+ENV NATAAS_ENVIRONMENT=0
+
+ENTRYPOINT [ "/project/main" ]
