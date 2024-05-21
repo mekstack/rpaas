@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "/endpointmanagement";
+
+service EndpointManagement{
+  rpc Add(Endpoint) returns (google.protobuf.Empty){};
+}
+
+message Endpoint{
+  string domain = 1;
+  string host = 2;
+  string port = 3;
+}

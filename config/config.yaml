@@ -1,0 +1,4 @@
+cert_server_port: 7777
+route_server_port: 5544
+endpoint_management_port: 5555
+xds_port: 18000
